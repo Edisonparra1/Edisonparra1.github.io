@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<title>Conectando Instagram · HopGol Studio</title>
+<style>
+  body{margin:0;padding:8vh 24px;background:#101710;color:#edf4e7;font:16px system-ui,sans-serif}
+  main{max-width:680px;margin:auto}h1{font-size:2rem}p{line-height:1.6}a{color:#b7e873}
+</style>
+<main>
+  <h1>Conectando Instagram con HopGol Studio</h1>
+  <p id="status" role="status">Volviendo al Studio local…</p>
+  <p>El Studio debe estar abierto en este computador.</p>
+  <a href="http://127.0.0.1:8770/?vista=hopscotch">Abrir HopGol Studio</a>
+</main>
+<script>
+  (() => {
+    const params = new URLSearchParams(location.search);
+    const state = params.get('state') || '';
+    const code = params.get('code') || '';
+    const error = params.get('error') || '';
+    history.replaceState(null, '', location.pathname);
+    if (!/^[A-Za-z0-9_-]{20,256}$/.test(state) || (!code && !error) || code.length > 4096 || error.length > 200) {
+      document.getElementById('status').textContent = 'Meta no devolvió una respuesta válida. Vuelve al Studio e inicia la conexión de nuevo.';
+      return;
+    }
+    const target = new URL('http://127.0.0.1:8770/oauth/meta/callback');
+    target.searchParams.set('state', state);
+    if (code) target.searchParams.set('code', code);
+    if (error) target.searchParams.set('error', error);
+    location.replace(target.href);
+  })();
+</script>
+</html>
